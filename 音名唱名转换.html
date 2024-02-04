@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音名与唱名转换训练</title>
+<style>
+.error {
+    color: red;
+}
+</style>
+</head>
+<body>
+    <div id="app">
+        <label id="prompt-label"></label>
+        <h1 id="question-label"></h1>
+        <input type="text" id="answer-input">
+        <button id="check-button">检查答案</button>
+        <div class="error" id="error-label"></div>
+    </div>
+
+    <script>
+    // 音名和唱名的对应关系
+    var noteNameMapping = {
+        'C': 'do',
+        'D': 're',
+        'E': 'mi',
+        'F': 'fa',
+        'G': 'sol',
+        'A': 'la',
+        'B': 'si'
+    };
+
+    var questionLabel = document.getElementById('question-label');
+    var promptLabel = document.getElementById('prompt-label');
+    var answerInput = document.getElementById('answer-input');
+    var checkButton = document.getElementById('check-button');
+    var errorLabel = document.getElementById('error-label');
+
+    // 事件监听
+    checkButton.addEventListener('click', checkAnswer);
+    answerInput.addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+            checkAnswer();
+        }
+    });
+
+    function checkAnswer() {
+        // 获取当前显示的音名或唱名，并转换为小写
+        var question = questionLabel.textContent;
+        var answer = answerInput.value.toLowerCase();
+
+        if ((question in noteNameMapping && noteNameMapping[question].toLowerCase() === answer) ||
+            (Object.values(noteNameMapping).includes(question) && Object.keys(noteNameMapping)[Object.values(noteNameMapping).indexOf(question)].toLowerCase() === answer)) {
+            // 正确答案，显示下一个问题
+            nextQuestion();
+        } else {
+            // 错误答案，显示错误
+            errorLabel.textContent = "错误，请重试。";
+        }
+    }
+
+    function nextQuestion() {
+        // 随机选取一个音名或唱名
+        var keys = Object.keys(noteNameMapping);
+        var values = Object.values(noteNameMapping);
+
+        if (Math.random() < 0.5) {
+            var question = keys[Math.floor(Math.random() * keys.length)];
+            promptLabel.textContent = "请将音名 '" + question + "' 转换为唱名：";
+        } else {
+            var question = values[Math.floor(Math.random() * values.length)];
+            promptLabel.textContent = "请将唱名 '" + question + "' 转换为音名：";
+        }
+        questionLabel.textContent = question;
+
+        // 清空输入和错误信息
+        answerInput.value = '';
+        errorLabel.textContent = '';
+    }
+
+    // 开始第一个问题
+    nextQuestion();
+    </script>
+</body>
+</html>
